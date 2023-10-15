@@ -738,6 +738,7 @@ void xhtml_to_stdout (const WString *s, const Epub2TxtOptions *options,
 
      Mode mode = MODE_ANY;
      BOOL inbody = FALSE;
+     BOOL infurigana = FALSE;
      BOOL can_newline = FALSE;
      WString *tag = wstring_create_empty();
      WString *entity = wstring_create_empty();
@@ -786,7 +787,7 @@ void xhtml_to_stdout (const WString *s, const Epub2TxtOptions *options,
 	    else
 	      {
 	      WString *s = xhtml_transform_char (c, options->ascii);
-	      wstring_append (para, s);
+	      if (!infurigana) wstring_append (para, s);
 	      wstring_destroy (s);
 	      }
 	    }
@@ -831,6 +832,14 @@ void xhtml_to_stdout (const WString *s, const Epub2TxtOptions *options,
 	      can_newline = FALSE;
 	      }
 	    inbody = FALSE;
+	    }
+	  else if (strcasecmp (ss_tag, "rt") == 0)
+	    {
+	    infurigana = TRUE;
+	    }
+	  else if (strcasecmp (ss_tag, "/rt") == 0)
+	    {
+	    infurigana = FALSE;
 	    }
 	  else if ((strcasecmp (ss_tag, "p/") == 0) 
 	      || (strcasecmp (ss_tag, "/p") == 0))
